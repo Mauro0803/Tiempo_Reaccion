@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Resultados de Pruebas</title>
+    {% include 'head.html' %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Colapsa los bordes para que no se dupliquen */
+        }
+        th, td {
+            border: 1px solid #ddd; /* Borde gris claro */
+            padding: 8px; /* Espaciado interno */
+            text-align: left; /* Alineación del texto */
+        }
+        th {
+            background-color: #f4f4f4; /* Color de fondo de las cabeceras */
+            font-weight: bold; /* Negrita en las cabeceras */
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Color de fondo alternativo para filas pares */
+        }
+        tr:hover {
+            background-color: #f1f1f1; /* Color de fondo al pasar el ratón */
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    <h1>Resultados de Pruebas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Letra 1</th>
+                <th>Tiempo 1</th>
+                <th>Letra 2</th>
+                <th>Tiempo 2</th>
+                <th>Letra 3</th>
+                <th>Tiempo 3</th>
+                <th>Letra 4</th>
+                <th>Tiempo 4</th>
+                <th>Letra 5</th>
+                <th>Tiempo 5</th>
+                <th>Promedio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for datos in datos_combinados %}
+            <tr>
+                <td>{{ datos.nombre }}</td>
+                <td>{{ datos.letra_1 }}</td>
+                <td>{{ datos.tiempo_1 }}</td>
+                <td>{{ datos.letra_2 }}</td>
+                <td>{{ datos.tiempo_2 }}</td>
+                <td>{{ datos.letra_3 }}</td>
+                <td>{{ datos.tiempo_3 }}</td>
+                <td>{{ datos.letra_4 }}</td>
+                <td>{{ datos.tiempo_4 }}</td>
+                <td>{{ datos.letra_5 }}</td>
+                <td>{{ datos.tiempo_5 }}</td>
+                <td><b>{{ datos.promedio }}</b></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Registro de Pruebas</title>
+    {% include 'head.html' %}
+
+    <style>
+        #letter-display {
+            font-size: 48px;
+            margin: 20px;
+            text-align: center;
+        }
+
+        #test-section {
+            display: none;
+            text-align: center;
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    <h1>Registro de Pruebas</h1>
+
+    <form id="test-form" method="post">
+        {% csrf_token %}
+        <div id="initial-section">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ingresa tu nombre">
+            <button type="button" id="start-button" class="disabled" onclick="startTest()">Iniciar Prueba</button>
+        </div>
+        <div id="test-section">
+            <div id="letter-display"></div>
+            <input type="text" id="user-input" autofocus>
+        </div>
+    </form>
+    <br>
+    {% include 'footer.html' %}
+
+    <script>
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let currentLetter = '';
+        let startTime = 0;
+        let responses = [];
+        let testCounter = 0;
+
+        function startTest() {
+            document.getElementById('initial-section').style.display = 'none';
+            document.getElementById('test-section').style.display = 'block';
+            nextTest();
+        }
+
+        function nextTest() {
+            if (testCounter < 5) {
+                currentLetter = letters[Math.floor(Math.random() * letters.length)];
+                document.getElementById('letter-display').textContent = currentLetter;
+                startTime = new Date().getTime();
+                document.getElementById('user-input').value = '';
+                document.getElementById('user-input').focus();
+                testCounter++;
+            } else {
+                submitTest();
+            }
+        }
+
+        function submitTest() {
+            fetch('{% url "submit_test" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    nombre: document.getElementById('nombre').value,
+                    responses: responses
+                })
+            }).then(response => response.json())
+                .then(data => {
+                    alert('Prueba completada. Resultados guardados.');
+                    window.location.href = '/resultados/'; 
+                });
+        }
+
+        document.getElementById('user-input').addEventListener('keyup', function (event) {
+            if (event.key.length === 1) {
+                const endTime = new Date().getTime();
+                const responseTime = (endTime - startTime) / 1000;
+                const userInput = event.key.toUpperCase();
+
+                responses.push({
+                    letter: currentLetter,
+                    time: (userInput === currentLetter) ? responseTime : 0
+                });
+
+                nextTest();
+            }
+        });
+
+        document.getElementById('nombre').addEventListener('input', function() {
+            const nameInput = document.getElementById('nombre').value;
+            const startButton = document.getElementById('start-button');
+            if (nameInput.trim() === '') {
+                startButton.classList.add('disabled');
+            } else {
+                startButton.classList.remove('disabled');
+            }
+        });
+    </script>
+</body>
+
+</html>
